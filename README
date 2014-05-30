@@ -1,0 +1,49 @@
+README -
+Configuration files for the environment
+
+Related Shortcuts:
+GDB
+1. gdb followed by load or gdb <program>
+2. print <variable>
+3. list filename:line#/function name
+4. backtrace - Stack
+5. break filename:line#/function name
+6. next 
+7. watch <variable>
+
+Tmux
+Binding Cntrl + a
+1. tmux -> new session
+2. Binding & c -> new window
+3. Binding & h -> Horizontal split
+4. Binding & v -> Vertical split
+5. Cntrl + arrow key -> Change windows
+6. Shift + arrow key -> Chang panes
+7. Binding + { -> Move pane left
+8. Binding + } -> Move pane right
+9. Binding + d -> Detach session
+
+Git 
+origin - point of origin on the web 
+1. git clone path
+2. git add <files>
+3. git status
+4. git log
+5. git commit
+6. git push
+7. git checkout hash -> view/revert an old version of a commit
+   git checkout master -> view/revert to the current state	 
+   git checkout HEAD file -> revert to the most recent file status
+8. git revert hash -> permanent revert to earlier commit
+9. git branch -> Find out the branch
+.git/config -> Configuration how the connection is made
+
+
+
+Emacs -
+1. Control + Meta + f/b  -> Match braces
+2. Meta + x goto-line
+3. Control + S <TAB key> highlight tabs
+
+
+
