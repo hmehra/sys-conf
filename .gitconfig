@@ -1,0 +1,19 @@
+[user]
+	name = Himanshu Mehra
+	email = hmehra@versa-networks.com
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    up = rebase
+    ci = commit
+[core]
+    editor = emacs
+[branch]
+	autosetuprebase = always
+[branch "dev"]
+	rebase = true
+[branch "dev-vrfd"]
+	rebase = true
+[color]
+	ui = auto
