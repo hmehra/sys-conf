@@ -38,12 +38,19 @@ origin - point of origin on the web
 9. git branch -> Find out the branch
 .git/config -> Configuration how the connection is made
 
-
-
 Emacs -
 1. Control + Meta + f/b  -> Match braces
 2. Meta + x goto-line
 3. Control + S <TAB key> highlight tabs
+4. Meta + < "Start of the buffer"
+5. M + x + set-variable case-fold-search nil   -> Disable case 							  sensitive search  
+6. Control + k  Delete line  
+7. C-c C-c Comment multiple lines
+8. Trailing whitespacs
+   Meta + x set-variable show-trailing-whitespace t
+9. Alt + g and g -> Go to line 	
 
 
-
+CTags for emacs
+1) Generate tag file
+find . -type f -iname "*.[chS]" | xargs etags -a

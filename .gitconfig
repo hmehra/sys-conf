@@ -17,3 +17,5 @@
 	rebase = true
 [color]
 	ui = auto
+[reviewboard]
+	url = http://review.versa-networks.com
