@@ -26,7 +26,7 @@ Binding Cntrl + a
 Git 
 origin - point of origin on the web 
 1. git clone path
-2. git add <files>
+2. git add <files> -u for modified files
 3. git status
 4. git log
 5. git commit
@@ -43,12 +43,13 @@ Emacs -
 2. Meta + x goto-line
 3. Control + S <TAB key> highlight tabs
 4. Meta + < "Start of the buffer"
-5. M + x + set-variable case-fold-search nil   -> Disable case 							  sensitive search  
+5. M + x + set-variable case-fold-search nil   -> Disable case sensitive search
 6. Control + k  Delete line  
-7. C-c C-c Comment multiple lines
+7. C-c C-c Comment multiple lines -> comment-dwim
 8. Trailing whitespacs
    Meta + x set-variable show-trailing-whitespace t
 9. Alt + g and g -> Go to line 	
+10. C-s C-w Search selected region under cursor
 
 
 CTags for emacs
