@@ -20,9 +20,11 @@
 (setq auto-mode-alist (cons '("\\.pm$" . perl-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.txt$" . text-mode) auto-mode-alist))
 
+; Remove initial splash-screen
+(setq initial-scratch-message "")
 
-(setq initial-scratch-message "") ; Remove initial splash-screen
-(setq inhibit-startup-message t)  ; Don't display start message
+; Don't display start message
+(setq inhibit-startup-message t)
 
 ; Background
 (custom-set-faces '(default ((t (:background "black" :foreground "grey"))))
@@ -34,10 +36,12 @@
 ; Line Numbers
 (custom-set-variables '(column-number-mode t) '(global-linum-mode t))
 
+; Unique Names
+(setq uniquify-buffer-name-style 'forward)
+
 ; Compile Shortcut
 (define-key global-map [(control q)]  'compile)
 (setq compile-command "cd ~/prototype-project/ && ./waf")
-
 
 ; Auto Complete Install external package
 (add-to-list 'load-path "~/.emacs.d/")
@@ -52,6 +56,8 @@
 (define-key global-map [(meta shift f)]  'cscope-find-this-file)
 (define-key global-map [(meta shift s)]  'cscope-find-this-symbol)
 (define-key global-map [(meta shift g)]  'cscope-find-global-definition)
+(define-key global-map [(meta shift n)]  'cscope-next-symbol)
+(define-key global-map [(meta shift n)]  'cscope-prev-symbol)
 (define-key global-map [(meta shift b)]  
   'cscope-find-global-definition-no-prompting)
 (define-key global-map [(meta shift x)]  
@@ -80,7 +86,7 @@
  "Cscope-Index Command"
  (interactive)
  (message "Building Database")
- (shell-command "cd $HOME/bin && cscope-indexer -r -v")
+ (shell-command "cd $HOME/bin && ./cscope-indexer")
  (message  "Done"))
  (define-key global-map [(meta shift c)] 'index-files)
 
@@ -92,12 +98,12 @@
 (message
  (if (let (window (get-buffer-window (current-buffer)))
        (set-window-dedicated-p window
-        (not (window-dedicated-p window))))
-    "Window '%s' is dedicated"
-    "Window '%s' is normal")
+                               (not (window-dedicated-p window))))
+     "Window '%s' is dedicated"
+   "Window '%s' is normal")
  (current-buffer)))
 
-(define-key global-map [(meta shift l)] 'toggle-window-dedicate)
+(define-key global-map [(meta shift l)] 'toggle-window-dedicated)
 
 ; Fill Column Indicator
 (add-hook 'after-change-major-mode-hook 'fci-mode)
@@ -106,7 +112,42 @@
 
 ; Save backup and autosave file in a seperate folder
 (setq backup-directory-alist  `((".*" . ,"~/.emacsbackup/")))
-(setq auto-save-file-name-transforms `((".*" ,"~/.emacsbackup/")))
+(setq auto-save-file-name-transforms `((".*" ,"~/.emacsbackup/" t)))
 
 ; (Un)Comment selected region
 (define-key global-map (kbd "C-c C-c") 'comment-dwim)
+
+; Roll out compilation buffer
+(setq-default compilation-scroll-output t)
+
+; Show full path of file in frame title
+(setq-default frame-title-format 
+              '("%f" (dired-directory dired-directory "%b")))
+
+
+; Show full file path in mode line
+(setq-default mode-line-buffer-identification
+              (list 'buffer-file-name
+                    (propertized-buffer-identification "%12f")
+                    (propertized-buffer-identification "%12b")))
+
+(add-hook 'dired-mode-hook
+          (lambda ()
+            (setq mode-line-buffer-identification
+                  '(:eval
+                    (propertized-buffer-identification
+                     (if (< (length default-directory) 17)
+                         (concat default-directory
+                                 (make-string (- 17 (length default-directory))
+                                              ?\s))
+                       default-directory))))))
+(put 'downcase-region 'disabled nil)
+
+; Change yes/no to y/n
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+; Auto revert-buffers
+(global-auto-revert-mode 1)
+
+; Highlight matching braces
+(show-paren-mode 1)
