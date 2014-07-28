@@ -37,19 +37,19 @@ origin - point of origin on the web
 8. git revert hash -> permanent revert to earlier commit
 9. git branch -> Find out the branch
 .git/config -> Configuration how the connection is made
+10. git blame <filename>  -> find out who made the changes
 
 Emacs -
 1. Control + Meta + f/b  -> Match braces
-2. Meta + x goto-line
-3. Control + S <TAB key> highlight tabs
-4. Meta + < "Start of the buffer"
-5. M + x + set-variable case-fold-search nil   -> Disable case sensitive search
-6. Control + k  Delete line  
-7. C-c C-c Comment multiple lines -> comment-dwim
-8. Trailing whitespacs
+2. Control + S <TAB key> highlight tabs
+3. Meta + Shift + < "Start of the buffer"
+4. M + x + set-variable case-fold-search nil   -> Disable case sensitive search
+5. Control + k  Delete line  
+6. Meta + ; Comment multiple lines -> comment-dwim
+7. Trailing whitespacs
    Meta + x set-variable show-trailing-whitespace t
-9. Alt + g and g -> Go to line 	
-10. C-s C-w Search selected region under cursor
+8. Alt + g and g -> Go to line 	
+9. C-s C-w Search selected region under cursor
 
 
 CTags for emacs

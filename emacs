@@ -119,9 +119,6 @@
 (setq backup-directory-alist  `((".*" . ,"~/.emacsbackup/")))
 (setq auto-save-file-name-transforms `((".*" ,"~/.emacsbackup/" t)))
 
-; (Un)Comment selected region
-(define-key global-map (kbd "C-c C-c") 'comment-dwim)
-
 ; Roll out compilation buffer
 (setq-default compilation-scroll-output t)
 
