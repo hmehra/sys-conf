@@ -1,6 +1,12 @@
 README -
 Configuration files for the environment
 
+File paths :
+1. tmux.conf   -> ~/.tmux.conf
+2. gitconfig   -> ~/.gitconfig
+3. emacs       -> ~/.emacs
+4. ssh.config  -> ~/.ssh/config
+
 Related Shortcuts:
 GDB
 1. gdb followed by load or gdb <program>
@@ -8,7 +14,7 @@ GDB
 3. list filename:line#/function name
 4. backtrace - Stack
 5. break filename:line#/function name
-6. next 
+6. next
 7. watch <variable>
 
 Tmux
