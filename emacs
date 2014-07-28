@@ -52,12 +52,15 @@
 
 ; Cscope for Emacs Install external package
 (setq cscope-do-not-update-database t)
-
+(setq cscope-display-cscope-buffer nil)
 (define-key global-map [(meta shift f)]  'cscope-find-this-file)
 (define-key global-map [(meta shift s)]  'cscope-find-this-symbol)
 (define-key global-map [(meta shift g)]  'cscope-find-global-definition)
 (define-key global-map [(meta shift n)]  'cscope-next-symbol)
-(define-key global-map [(meta shift n)]  'cscope-prev-symbol)
+(define-key global-map [(meta shift p)]  'cscope-prev-symbol)
+(define-key global-map [(meta shift k)]  'cscope-next-file)
+(define-key global-map [(meta shift j)]  'cscope-prev-file)
+(define-key global-map [(meta b)]        'cscope-display-buffer)
 (define-key global-map [(meta shift b)]  
   'cscope-find-global-definition-no-prompting)
 (define-key global-map [(meta shift x)]  
@@ -84,11 +87,13 @@
 ; Cscope Indexer
 (defun index-files ()
  "Cscope-Index Command"
- (interactive)
- (message "Building Database")
- (shell-command "cd $HOME/bin && ./cscope-indexer")
- (message  "Done"))
- (define-key global-map [(meta shift c)] 'index-files)
+(interactive)
+(message "Building Database")
+(shell-command "cd $HOME/bin && ./cscope-indexer")
+(message  "Done"))
+
+(define-key global-map [(meta shift c)] 'index-files)
+(setq tags-table-list '("~/prototype-project"))
 
 
 ; Toggle window dedication
@@ -151,3 +156,14 @@
 
 ; Highlight matching braces
 (show-paren-mode 1)
+
+; Don't ask for confirmation when loading large files
+(setq large-file-warning-threshold nil)
+
+; Display details about closing brace
+(defadvice show-paren-function (after my-echo-paren-matching-line activate)
+  "If a matching paren is off-screen, echo the matching line."
+  (when (char-equal (char-syntax (char-before (point))) ?\))
+    (let ((matching-text (blink-matching-open)))
+      (when matching-text
+        (message matching-text)))))
