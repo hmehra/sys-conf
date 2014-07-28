@@ -8,7 +8,7 @@
     up = rebase
     ci = commit
 [core]
-    editor = emacs
+    editor = emacs -nw
 [branch]
 	autosetuprebase = always
 [branch "dev"]

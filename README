@@ -38,6 +38,10 @@ origin - point of origin on the web
 9. git branch -> Find out the branch
 .git/config -> Configuration how the connection is made
 10. git blame <filename>  -> find out who made the changes
+11. Git via SSH
+    Add the public key to the host
+    Edit ssh config file. Add username, public key, hostname
+    Edit git config file. Change url to ssh path
 
 Emacs -
 1. Control + Meta + f/b  -> Match braces
