@@ -65,3 +65,6 @@ Emacs -
 CTags for emacs
 1) Generate tag file
 find . -type f -iname "*.[chS]" | xargs etags -a
+
+Password less ssh
+cat .ssh/id_rsa.pub | ssh b@B 'cat >> .ssh/authorized_keys'
