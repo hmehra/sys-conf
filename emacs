@@ -30,8 +30,8 @@
 (custom-set-faces '(default ((t (:background "black" :foreground "grey"))))
                   '(fringe ((t (:background "black")))))
 
-;Remove Scrollbar
-(scroll-bar-mode 0)
+;Remove Scrollbar - Required for emacs gui client 
+;(scroll-bar-mode 0)
 
 ; Line Numbers
 (custom-set-variables '(column-number-mode t) '(global-linum-mode t))
