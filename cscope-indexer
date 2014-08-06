@@ -2,7 +2,7 @@
 
 DIR=$HOME/prototype-project
 cd $DIR
-
+   
 # Delete any existing cscope files
 echo "Deleting existing cscope.out cscope.in.out cscope.po.out TAGS"
 rm -rf cscope.out cscope.in.out cscope.po.out tags TAGS

@@ -5,11 +5,22 @@
 (add-to-list 'load-path "~/.myemacs/")
 
 ; Load Files
+(require 'package)
 (require 'uniquify)
 (require 'xcscope)
 (require 'protobuf-mode)
 (require 'fill-column-indicator)
 (require 'yang-mode)
+
+; Package sources
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                         ("ELPA" . "http://tromey.com/elpa/")
+                         ("marmalade" . "http://marmalade-repo.org/packages/")
+                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+(package-initialize)
+(when (not package-archive-contents) 
+  (package-refresh-contents))
+
 
 ; Editing Modes
 (setq auto-mode-alist (cons '("\\.java$" . java-mode) auto-mode-alist))
@@ -42,12 +53,6 @@
 ; Compile Shortcut
 (define-key global-map [(control q)]  'compile)
 (setq compile-command "cd ~/prototype-project/ && ./waf")
-
-; Auto Complete Install external package
-(add-to-list 'load-path "~/.emacs.d/")
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
-(ac-config-default)
 
 
 ; Cscope for Emacs Install external package
