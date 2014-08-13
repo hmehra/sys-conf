@@ -68,3 +68,7 @@ find . -type f -iname "*.[chS]" | xargs etags -a
 
 Password less ssh
 cat .ssh/id_rsa.pub | ssh b@B 'cat >> .ssh/authorized_keys'
+
+Emacs Packages - 
+1. Auto complete mode
+2. Magit
