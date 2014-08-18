@@ -169,3 +169,6 @@
     (let ((matching-text (blink-matching-open)))
       (when matching-text
         (message matching-text)))))
+
+; Enable word wrap
+(global-visual-line-mode t)
