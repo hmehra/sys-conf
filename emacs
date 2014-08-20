@@ -18,7 +18,7 @@
                          ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
 (package-initialize)
-(when (not package-archive-contents) 
+(when (not package-archive-contents)
   (package-refresh-contents))
 
 
@@ -41,7 +41,7 @@
 (custom-set-faces '(default ((t (:background "black" :foreground "grey"))))
                   '(fringe ((t (:background "black")))))
 
-;Remove Scrollbar - Required for emacs gui client 
+;Remove Scrollbar - Required for emacs gui client
 ;(scroll-bar-mode 0)
 
 ; Line Numbers
@@ -66,9 +66,9 @@
 (define-key global-map [(meta shift k)]  'cscope-next-file)
 (define-key global-map [(meta shift j)]  'cscope-prev-file)
 (define-key global-map [(meta b)]        'cscope-display-buffer)
-(define-key global-map [(meta shift b)]  
+(define-key global-map [(meta shift b)]
   'cscope-find-global-definition-no-prompting)
-(define-key global-map [(meta shift x)]  
+(define-key global-map [(meta shift x)]
   'cscope-find-functions-calling-this-function)
 
 ; Untabify
@@ -128,7 +128,7 @@
 (setq-default compilation-scroll-output t)
 
 ; Show full path of file in frame title
-(setq-default frame-title-format 
+(setq-default frame-title-format
               '("%f" (dired-directory dired-directory "%b")))
 
 
