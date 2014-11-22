@@ -2,10 +2,10 @@
 Configuration files for the environment
 
 ## File paths
-* tmux.conf   -> ~/.tmux.conf
-* gitconfig   -> ~/.gitconfig
-* emacs       -> ~/.emacs
-* ssh.config  -> ~/.ssh/config
+1. tmux.conf   -> ~/.tmux.conf
+2. gitconfig   -> ~/.gitconfig
+3. emacs       -> ~/.emacs
+4. ssh.config  -> ~/.ssh/config
 
 ## Related Shortcuts:
 
