@@ -1,8 +1,12 @@
 
 ;;; Emacs Configuration File
 
+(setq user-full-name "Himanshu Mehra"
+      user-mail-address "hmehra@usc.edu")
+
 ; Load Path
 (add-to-list 'load-path "~/.myemacs/")
+(add-to-list 'load-path "~/.emacs.d/")
 
 ; Load Files
 (require 'package)
@@ -17,10 +21,15 @@
                          ("ELPA" . "http://tromey.com/elpa/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
+
 (package-initialize)
 (when (not package-archive-contents)
   (package-refresh-contents))
 
+; Auto complete
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
+(ac-config-default)
 
 ; Editing Modes
 (setq auto-mode-alist (cons '("\\.java$" . java-mode) auto-mode-alist))
@@ -52,7 +61,7 @@
 
 ; Compile Shortcut
 (define-key global-map [(control q)]  'compile)
-(setq compile-command "cd ~/prototype-project/ && ./waf")
+(setq compile-command "make clean; make")
 
 
 ; Cscope for Emacs Install external package
@@ -94,7 +103,7 @@
  "Cscope-Index Command"
 (interactive)
 (message "Building Database")
-(shell-command "cd $HOME/bin && ./cscope-indexer")
+(shell-command "cd ~/myconf/ && ./cscope-indexer")
 (message  "Done"))
 
 (define-key global-map [(meta shift c)] 'index-files)
@@ -151,7 +160,10 @@
 (put 'downcase-region 'disabled nil)
 
 ; Change yes/no to y/n
-(defalias 'yes-or-no-p 'y-or-n-p)
+(fset 'yes-or-no-p 'y-or-n-p)
+
+; Indent new lines
+(global-set-key (kbd "RET") 'newline-and-indent)
 
 ; Auto revert-buffers
 (global-auto-revert-mode 1)
@@ -172,3 +184,7 @@
 
 ; Enable word wrap
 (global-visual-line-mode t)
+
+; Syntax check
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
