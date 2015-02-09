@@ -39,6 +39,9 @@
 (setq auto-mode-alist (cons '("\\.pl$" . perl-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.pm$" . perl-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.txt$" . text-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.py$" . python-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.json\\'" . js-mode) auto-mode-alist))
+    
 
 ; Remove initial splash-screen
 (setq initial-scratch-message "")
@@ -46,9 +49,9 @@
 ; Don't display start message
 (setq inhibit-startup-message t)
 
-; Background
-(custom-set-faces '(default ((t (:background "black" :foreground "grey"))))
-                  '(fringe ((t (:background "black")))))
+; Background - If Solarized not enabled
+;(custom-set-faces '(default ((t (:background "black" :foreground "grey"))))
+                     '(fringe ((t (:background "black")))))
 
 ;Remove Scrollbar - Required for emacs gui client
 ;(scroll-bar-mode 0)
@@ -63,6 +66,11 @@
 (define-key global-map [(control q)]  'compile)
 (setq compile-command "make clean; make")
 
+; Default Tags Table
+(setq tags-table-list '("/project/swbuild169/emehhim/spider/TAGS"))
+
+; Cscope Database
+(setq cscope-initial-directory "/project/swbuild169/emehhim/spider/")
 
 ; Cscope for Emacs Install external package
 (setq cscope-do-not-update-database t)
@@ -136,11 +144,6 @@
 ; Roll out compilation buffer
 (setq-default compilation-scroll-output t)
 
-; Show full path of file in frame title
-(setq-default frame-title-format
-              '("%f" (dired-directory dired-directory "%b")))
-
-
 ; Show full file path in mode line
 (setq-default mode-line-buffer-identification
               (list 'buffer-file-name
@@ -188,3 +191,7 @@
 ; Syntax check
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
+;Syntax Highlight - Make Comments Red Emacs 22 or below
+(global-font-lock-mode 1)
+(setq font-lock-maximum-decoration t)
+(set-face-foreground 'font-lock-comment-face "red")
