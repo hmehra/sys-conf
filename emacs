@@ -1,30 +1,20 @@
 
 ;;; Emacs Configuration File
 
-(setq user-full-name "Himanshu Mehra"
-      user-mail-address "hmehra@usc.edu")
+(setq user-full-name "Himanshu Mehra")
 
 ; Load Path
 (add-to-list 'load-path "~/.myemacs/")
 (add-to-list 'load-path "~/.emacs.d/")
 
 ; Load Files
-(require 'package)
 (require 'uniquify)
 (require 'xcscope)
-(require 'protobuf-mode)
 (require 'fill-column-indicator)
-(require 'yang-mode)
 
-; Package sources
-(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ("ELPA" . "http://tromey.com/elpa/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
-
-(package-initialize)
-(when (not package-archive-contents)
-  (package-refresh-contents))
+;; Company Specific modes    
+;(require 'protobuf-mode)
+;(require 'yang-mode)
 
 ; Auto complete
 (require 'auto-complete-config)
@@ -41,7 +31,6 @@
 (setq auto-mode-alist (cons '("\\.txt$" . text-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.py$" . python-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.json\\'" . js-mode) auto-mode-alist))
-    
 
 ; Remove initial splash-screen
 (setq initial-scratch-message "")
@@ -49,22 +38,30 @@
 ; Don't display start message
 (setq inhibit-startup-message t)
 
-; Background - If Solarized not enabled
-;(custom-set-faces '(default ((t (:background "black" :foreground "grey"))))
-                     '(fringe ((t (:background "black")))))
-
-;Remove Scrollbar - Required for emacs gui client
-;(scroll-bar-mode 0)
+; Background
+(custom-set-faces '(default ((t (:background "black" :foreground "grey"))))
+                  '(fringe ((t (:background "black")))))
 
 ; Line Numbers
-(custom-set-variables '(column-number-mode t) '(global-linum-mode t))
+;(custom-set-variables '(column-number-mode t) '(global-linum-mode t))
 
 ; Unique Names
 (setq uniquify-buffer-name-style 'forward)
 
 ; Compile Shortcut
 (define-key global-map [(control q)]  'compile)
-(setq compile-command "make clean; make")
+(setq compile-command "cd /project/swbuild169/emehhim/spider/pkt;
+                       emq PRODUCT=ASG")
+
+; Cscope Indexer
+(defun index-files ()
+ "Cscope-Index Command"
+(interactive)
+(message "Building Database")
+(shell-command "cd $HOME/sys-conf && ./cscope-indexer.sh")
+(message  "Done"))
+
+(define-key global-map [(meta shift c)] 'index-files)
 
 ; Default Tags Table
 (setq tags-table-list '("/project/swbuild169/emehhim/spider/TAGS"))
@@ -106,18 +103,6 @@
 (setq-default tab-width 4)
 (setq indent-line-function 'insert-tab)
 
-; Cscope Indexer
-(defun index-files ()
- "Cscope-Index Command"
-(interactive)
-(message "Building Database")
-(shell-command "cd ~/myconf/ && ./cscope-indexer")
-(message  "Done"))
-
-(define-key global-map [(meta shift c)] 'index-files)
-(setq tags-table-list '("~/prototype-project"))
-
-
 ; Toggle window dedication
 (defun toggle-window-dedicated ()
 "Toggle whether the current active window is dedicated or not"
@@ -144,23 +129,28 @@
 ; Roll out compilation buffer
 (setq-default compilation-scroll-output t)
 
-; Show full file path in mode line
-(setq-default mode-line-buffer-identification
-              (list 'buffer-file-name
-                    (propertized-buffer-identification "%12f")
-                    (propertized-buffer-identification "%12b")))
+; Show full path of file in frame title
+(setq-default frame-title-format
+              '("%f" (dired-directory dired-directory "%b")))
 
-(add-hook 'dired-mode-hook
-          (lambda ()
-            (setq mode-line-buffer-identification
-                  '(:eval
-                    (propertized-buffer-identification
-                     (if (< (length default-directory) 17)
-                         (concat default-directory
-                                 (make-string (- 17 (length default-directory))
-                                              ?\s))
-                       default-directory))))))
-(put 'downcase-region 'disabled nil)
+
+; Show full file path in mode line
+;; (setq-default mode-line-buffer-identification
+;;               (list 'buffer-file-name
+;;                     (propertized-buffer-identification "%12f")
+;;                     (propertized-buffer-identification "%12b")))
+
+;; (add-hook 'dired-mode-hook
+;;           (lambda ()
+;;             (setq mode-line-buffer-identification
+;;                   '(:eval
+;;                     (propertized-buffer-identification
+;;                      (if (< (length default-directory) 17)
+;;                          (concat default-directory
+;;                                  (make-string (- 17 (length default-directory))
+;;                                               ?\s))
+;;                        default-directory))))))
+;; (put 'downcase-region 'disabled nil)
 
 ; Change yes/no to y/n
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -186,12 +176,15 @@
         (message matching-text)))))
 
 ; Enable word wrap
-(global-visual-line-mode t)
+(global-visual-line-mode 1)
 
-; Syntax check
-(add-hook 'after-init-hook #'global-flycheck-mode)
+; Syntax check - After installing Flycheck
+;(add-hook 'after-init-hook #'global-flycheck-mode)
 
-;Syntax Highlight - Make Comments Red Emacs 22 or below
+;Make Comments Red Emacs 22 or below
 (global-font-lock-mode 1)
 (setq font-lock-maximum-decoration t)
 (set-face-foreground 'font-lock-comment-face "red")
+
+; Remove menu bar
+(menu-bar-mode -1)
