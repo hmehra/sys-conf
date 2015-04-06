@@ -13,8 +13,8 @@
 (require 'fill-column-indicator)
 
 ;; Company Specific modes    
-;(require 'protobuf-mode)
-;(require 'yang-mode)
+(require 'protobuf-mode)
+(require 'yang-mode)
 
 ; Auto complete
 (require 'auto-complete-config)
@@ -135,22 +135,22 @@
 
 
 ; Show full file path in mode line
-;; (setq-default mode-line-buffer-identification
-;;               (list 'buffer-file-name
-;;                     (propertized-buffer-identification "%12f")
-;;                     (propertized-buffer-identification "%12b")))
+(setq-default mode-line-buffer-identification
+              (list 'buffer-file-name
+                    (propertized-buffer-identification "%12f")
+                    (propertized-buffer-identification "%12b")))
 
-;; (add-hook 'dired-mode-hook
-;;           (lambda ()
-;;             (setq mode-line-buffer-identification
-;;                   '(:eval
-;;                     (propertized-buffer-identification
-;;                      (if (< (length default-directory) 17)
-;;                          (concat default-directory
-;;                                  (make-string (- 17 (length default-directory))
-;;                                               ?\s))
-;;                        default-directory))))))
-;; (put 'downcase-region 'disabled nil)
+(add-hook 'dired-mode-hook
+          (lambda ()
+            (setq mode-line-buffer-identification
+                  '(:eval
+                    (propertized-buffer-identification
+                     (if (< (length default-directory) 17)
+                         (concat default-directory
+                                 (make-string (- 17 (length default-directory))
+                                              ?\s))
+                       default-directory))))))
+(put 'downcase-region 'disabled nil)
 
 ; Change yes/no to y/n
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -179,7 +179,7 @@
 (global-visual-line-mode 1)
 
 ; Syntax check - After installing Flycheck
-;(add-hook 'after-init-hook #'global-flycheck-mode)
+(add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;Make Comments Red Emacs 22 or below
 (global-font-lock-mode 1)
