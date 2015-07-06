@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # remove existing files
-rm $HOME/.emacs $HOME/.tmux.conf
+rm -rf $HOME/.emacs $HOME/.tmux.conf $HOME/.myemacs
 
 # Add files to respective locations
 cp emacs $HOME/.emacs
