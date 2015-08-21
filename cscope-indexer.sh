@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR=/project/swbuild169/emehhim/spider
+DIR=$HOME
 cd $DIR
    
 # Delete any existing cscope files

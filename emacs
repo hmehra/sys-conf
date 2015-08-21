@@ -16,10 +16,10 @@
 (require 'protobuf-mode)
 (require 'yang-mode)
 
-; Auto complete
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
-(ac-config-default)
+; Auto complete - Setup after installing
+;(require 'auto-complete-config)
+;(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
+;(ac-config-default)
 
 ; Editing Modes
 (setq auto-mode-alist (cons '("\\.java$" . java-mode) auto-mode-alist))
@@ -50,8 +50,7 @@
 
 ; Compile Shortcut
 (define-key global-map [(control q)]  'compile)
-(setq compile-command "cd /project/swbuild169/emehhim/spider/pkt;
-                       emq PRODUCT=ASG")
+(setq compile-command "make clean; make")
 
 ; Cscope Indexer
 (defun index-files ()
@@ -64,10 +63,10 @@
 (define-key global-map [(meta shift c)] 'index-files)
 
 ; Default Tags Table
-(setq tags-table-list '("/project/swbuild169/emehhim/spider/TAGS"))
+(setq tags-table-list '("~/TAGS"))
 
 ; Cscope Database
-(setq cscope-initial-directory "/project/swbuild169/emehhim/spider/")
+(setq cscope-initial-directory "~/")
 
 ; Cscope for Emacs Install external package
 (setq cscope-do-not-update-database t)
@@ -93,7 +92,7 @@
 (defun add-write-contents-hooks-hook ()
   (add-hook 'write-contents-hooks 'untab-all nil   t ))
 
-; Turn on extra whitespace highlight
+; Turn on extra whitespace highlight - Does not work along fci-mode
 (setq-default show-trailing-whitespace t)
 
 ; Stop auto indent
