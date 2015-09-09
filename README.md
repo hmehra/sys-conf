@@ -61,6 +61,8 @@ Git via SSH
 * Meta + x set-variable show-trailing-whitespace t
 * Alt + g and g -> Go to line
 * C-s C-w Search selected region under cursor
+* C-u C-space -> Jump back in file
+* C-x C-space -> Jump to previous buffer
 
 
 ### CTags for emacs
