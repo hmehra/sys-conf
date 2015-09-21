@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR=$HOME
+DIR=$PWD
 cd $DIR
 
 # Delete any existing cscope files

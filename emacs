@@ -1,4 +1,3 @@
-
 ;;; Emacs Configuration File
 
 (setq user-full-name "Himanshu Mehra")
@@ -12,14 +11,12 @@
 (require 'xcscope)
 (require 'fill-column-indicator)
 
-;; Company Specific modes    
+;; Company Specific modes
 (require 'protobuf-mode)
 (require 'yang-mode)
 
-; Auto complete - Setup after installing
-;(require 'auto-complete-config)
-;(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
-;(ac-config-default)
+; Packages
+(package-initialize)
 
 ; Editing Modes
 (setq auto-mode-alist (cons '("\\.java$" . java-mode) auto-mode-alist))
@@ -32,15 +29,24 @@
 (setq auto-mode-alist (cons '("\\.py$" . python-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.json\\'" . js-mode) auto-mode-alist))
 
+; Auto complete - Setup after installing
+;(require 'auto-complete-config)
+;(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
+;(ac-config-default)
+
 ; Remove initial splash-screen
 (setq initial-scratch-message "")
 
 ; Don't display start message
 (setq inhibit-startup-message t)
 
-; Background
-(custom-set-faces '(default ((t (:background "black" :foreground "grey"))))
-                  '(fringe ((t (:background "black")))))
+; Fci Mode
+(add-hook 'after-change-major-mode-hook 'fci-mode)
+(setq fci-rule-width 1)
+(setq fci-rule-column 80)
+(setq fci-rule-color "black")
+(global-whitespace-mode 1)
+(setq whitespace-style '(face trailing))
 
 ; Line Numbers
 ;(custom-set-variables '(column-number-mode t) '(global-linum-mode t))
@@ -71,6 +77,7 @@
 ; Cscope for Emacs Install external package
 (setq cscope-do-not-update-database t)
 (setq cscope-display-cscope-buffer nil)
+(define-key global-map [(meta shift d)]  'cscope-set-initial-directory)
 (define-key global-map [(meta shift f)]  'cscope-find-this-file)
 (define-key global-map [(meta shift s)]  'cscope-find-this-symbol)
 (define-key global-map [(meta shift g)]  'cscope-find-global-definition)
@@ -92,7 +99,7 @@
 (defun add-write-contents-hooks-hook ()
   (add-hook 'write-contents-hooks 'untab-all nil   t ))
 
-; Turn on extra whitespace highlight - Does not work along fci-mode
+; Turn on extra whitespace highlight
 (setq-default show-trailing-whitespace t)
 
 ; Stop auto indent
@@ -115,11 +122,6 @@
  (current-buffer)))
 
 (define-key global-map [(meta shift l)] 'toggle-window-dedicated)
-
-; Fill Column Indicator
-(add-hook 'after-change-major-mode-hook 'fci-mode)
-(setq fci-rule-color "darkblue")
-(setq fci-rule-column 80)
 
 ; Save backup and autosave file in a seperate folder
 (setq backup-directory-alist  `((".*" . ,"~/.emacsbackup/")))
@@ -187,3 +189,25 @@
 
 ; Remove menu bar
 (menu-bar-mode -1)
+
+; Represent space by .
+(setq whitespace-display-mappings '((space-mark ?\  [?.])
+                                    (newline-mark ?\n [?$ ?\n])
+                                    (tab-mark ?\t [?\\ ?\t])))
+
+; Column Number Modes
+(setq column-number-mode t)
+
+; Make eshell bash
+(setq shell-file-name "bash")
+(setq shell-command-switch "-ic")
+
+;; Set symbol for the border
+(set-face-inverse-video-p 'vertical-border nil)
+(set-face-background 'vertical-border (face-background 'default))
+(set-display-table-slot standard-display-table
+                        'vertical-border
+                        (make-glyph-code ?|))
+
+; Linum Mode
+(setq linum-format "%4d | ")
