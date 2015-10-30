@@ -31,7 +31,7 @@ Configuration files for the environment
 * Binding + d -> Detach session
 
 ### Git
-* origin - point of origin on the web  
+* origin - point of origin on the web
 * .git/config -> Configuration how the connection is made
 * git clone path
 * git add <files> -u for modified files
@@ -63,7 +63,8 @@ Git via SSH
 * C-s C-w Search selected region under cursor
 * C-u C-space -> Jump back in file
 * C-x C-space -> Jump to previous buffer
-
+* C-x w h -> Highlight word
+* C-x w r -> Clear word
 
 ### CTags for emacs
 * Generate tag file
