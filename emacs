@@ -1,19 +1,20 @@
 ;;; Emacs Configuration File
-
 (setq user-full-name "Himanshu Mehra")
 
 ; Load Path
 (add-to-list 'load-path "~/.myemacs/")
+(add-to-list 'load-path "~/.myemacs/evil")
 (add-to-list 'load-path "~/.emacs.d/")
+(add-to-list 'load-path "~/.emacs.d/cl-lib")
 
-; Load Files
+; Load files
+(require 'package)
+(require 'cl-lib)
 (require 'uniquify)
 (require 'xcscope)
 (require 'fill-column-indicator)
-
-;; Company Specific modes
-(require 'protobuf-mode)
-(require 'yang-mode)
+(require 'sr-speedbar)
+(require 'evil)
 
 ; Packages
 (package-initialize)
@@ -29,50 +30,46 @@
 (setq auto-mode-alist (cons '("\\.py$" . python-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.json\\'" . js-mode) auto-mode-alist))
 
-; Auto complete - Setup after installing
-;(require 'auto-complete-config)
-;(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
-;(ac-config-default)
-
 ; Remove initial splash-screen
 (setq initial-scratch-message "")
 
 ; Don't display start message
 (setq inhibit-startup-message t)
 
+; Unique Names
+(setq uniquify-buffer-name-style 'forward)
+
 ; Fci Mode
 (add-hook 'after-change-major-mode-hook 'fci-mode)
 (setq fci-rule-width 1)
 (setq fci-rule-column 80)
-(setq fci-rule-color "black")
+(setq fci-rule-color "blue")
 (global-whitespace-mode 1)
 (setq whitespace-style '(face trailing))
 
-; Line Numbers
-;(custom-set-variables '(column-number-mode t) '(global-linum-mode t))
+; Compile Shortcuts
+(define-key global-map [(control meta c)]  'compile)
 
-; Unique Names
-(setq uniquify-buffer-name-style 'forward)
-
-; Compile Shortcut
-(define-key global-map [(control q)]  'compile)
-(setq compile-command "make clean; make")
+; Auto complete
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
+(global-auto-complete-mode t)
 
 ; Cscope Indexer
 (defun index-files ()
  "Cscope-Index Command"
 (interactive)
 (message "Building Database")
-(shell-command "cd $HOME/sys-conf && ./cscope-indexer.sh")
+(shell-command "idx")
 (message  "Done"))
 
-(define-key global-map [(meta shift c)] 'index-files)
+(define-key global-map [(meta shift t)] 'index-files)
 
 ; Default Tags Table
-(setq tags-table-list '("~/TAGS"))
+;(setq tags-table-list '("/localetna/himmehra/black/sdk/TAGS"))
 
 ; Cscope Database
-(setq cscope-initial-directory "~/")
+;(setq cscope-initial-directory "/localetna/himmehra/LBT-102/sdk")
 
 ; Cscope for Emacs Install external package
 (setq cscope-do-not-update-database t)
@@ -83,21 +80,11 @@
 (define-key global-map [(meta shift g)]  'cscope-find-global-definition)
 (define-key global-map [(meta shift n)]  'cscope-next-symbol)
 (define-key global-map [(meta shift p)]  'cscope-prev-symbol)
-(define-key global-map [(meta shift k)]  'cscope-next-file)
-(define-key global-map [(meta shift j)]  'cscope-prev-file)
-(define-key global-map [(meta b)]        'cscope-display-buffer)
+(define-key global-map [(meta c)]        'cscope-display-buffer)
 (define-key global-map [(meta shift b)]
   'cscope-find-global-definition-no-prompting)
 (define-key global-map [(meta shift x)]
   'cscope-find-functions-calling-this-function)
-
-; Untabify
-(defun untab-all ()
-  (untabify (point-min) (point-max))
-   nil ) ; did not write buffer to disk
-
-(defun add-write-contents-hooks-hook ()
-  (add-hook 'write-contents-hooks 'untab-all nil   t ))
 
 ; Turn on extra whitespace highlight
 (setq-default show-trailing-whitespace t)
@@ -134,39 +121,20 @@
 (setq-default frame-title-format
               '("%f" (dired-directory dired-directory "%b")))
 
-
-; Show full file path in mode line
-(setq-default mode-line-buffer-identification
-              (list 'buffer-file-name
-                    (propertized-buffer-identification "%12f")
-                    (propertized-buffer-identification "%12b")))
-
-(add-hook 'dired-mode-hook
-          (lambda ()
-            (setq mode-line-buffer-identification
-                  '(:eval
-                    (propertized-buffer-identification
-                     (if (< (length default-directory) 17)
-                         (concat default-directory
-                                 (make-string (- 17 (length default-directory))
-                                              ?\s))
-                       default-directory))))))
-(put 'downcase-region 'disabled nil)
-
 ; Change yes/no to y/n
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ; Indent new lines
-(global-set-key (kbd "RET") 'newline-and-indent)
+;(global-set-key (kbd "RET") 'newline-and-indent)
 
 ; Auto revert-buffers
 (global-auto-revert-mode 1)
 
-; Highlight matching braces
-(show-paren-mode 1)
-
 ; Don't ask for confirmation when loading large files
 (setq large-file-warning-threshold nil)
+
+; Highlight matching braces
+(show-paren-mode 1)
 
 ; Display details about closing brace
 (defadvice show-paren-function (after my-echo-paren-matching-line activate)
@@ -179,14 +147,6 @@
 ; Enable word wrap
 (global-visual-line-mode 1)
 
-; Syntax check - After installing Flycheck
-(add-hook 'after-init-hook #'global-flycheck-mode)
-
-;Make Comments Red Emacs 22 or below
-(global-font-lock-mode 1)
-(setq font-lock-maximum-decoration t)
-(set-face-foreground 'font-lock-comment-face "red")
-
 ; Remove menu bar
 (menu-bar-mode -1)
 
@@ -195,19 +155,176 @@
                                     (newline-mark ?\n [?$ ?\n])
                                     (tab-mark ?\t [?\\ ?\t])))
 
+; Make Comments Red Emacs 22 or below
+(global-font-lock-mode 1)
+(setq font-lock-maximum-decoration t)
+(set-face-foreground 'font-lock-comment-face "red")
+
 ; Column Number Modes
 (setq column-number-mode t)
-
-; Make eshell bash
-(setq shell-file-name "bash")
-(setq shell-command-switch "-ic")
 
 ;; Set symbol for the border
 (set-face-inverse-video-p 'vertical-border nil)
 (set-face-background 'vertical-border (face-background 'default))
 (set-display-table-slot standard-display-table
-                        'vertical-border
-                        (make-glyph-code ?|))
+                       'vertical-border
+                       (make-glyph-code ?|))
 
 ; Linum Mode
-(setq linum-format "%4d | ")
+(setq linum-format (lambda
+                     (line)
+                     (propertize
+                      (format (concat "%"
+                                      (number-to-string
+                                       (length
+                                        (number-to-string
+                                         (line-number-at-pos
+                                          (point-max)))))
+                                      "d ")
+                              line)
+                      'face
+                      'linum)))
+
+; Custom faces
+(custom-set-variables)
+(custom-set-faces
+'(font-lock-string-face ((((class color) (min-colors 88) (background dark)) (:foreground "green"))))
+'(font-lock-type-face ((((class color) (min-colors 88) (background dark)) (:foreground "magenta"))))
+'(isearch ((((class color) (min-colors 88) (background dark)) (:background "red" :foreground "white"))))
+'(lazy-highlight ((((class color) (min-colors 88) (background dark)) (:background "white"))))
+'(region ((((class color) (min-colors 88) (background dark)) (:background "blue" :foreground "white")))))
+
+; Speedbar
+(global-set-key (kbd "<f6>") 'sr-speedbar-toggle)
+
+; Move between emacs buffer
+(global-set-key (kbd "C-x <up>") 'windmove-up)
+(global-set-key (kbd "C-x <down>") 'windmove-down)
+(global-set-key (kbd "C-x <left>") 'windmove-left)
+(global-set-key (kbd "C-x <right>") 'windmove-right)
+
+; Kill Yank Paste. Suck it VIM
+(defadvice kill-ring-save (before slick-copy activate compile) "When called
+  interactively with no active region, copy a single line instead."
+  (interactive (if mark-active (list (region-beginning) (region-end)) (message
+  "Copied line") (list (line-beginning-position) (line-beginning-position
+  2)))))
+
+(defadvice kill-region (before slick-cut activate compile)
+  "When called interactively with no active region, kill a single line instead."
+  (interactive
+    (if mark-active (list (region-beginning) (region-end))
+      (list (line-beginning-position)
+        (line-beginning-position 2)))))
+
+; Make #if 0 comment face
+(defun my-c-mode-font-lock-if0 (limit)
+  (save-restriction
+    (widen)
+    (save-excursion
+      (goto-char (point-min))
+      (let ((depth 0) str start start-depth)
+        (while (re-search-forward "^\\s-*#\\s-*\\(if\\|else\\|endif\\)" limit 'move)
+          (setq str (match-string 1))
+          (if (string= str "if")
+              (progn
+                (setq depth (1+ depth))
+                (when (and (null start) (looking-at "\\s-+0"))
+                  (setq start (match-end 0)
+                        start-depth depth)))
+            (when (and start (= depth start-depth))
+              (c-put-font-lock-face start (match-beginning 0) 'font-lock-comment-face)
+              (setq start nil))
+            (when (string= str "endif")
+              (setq depth (1- depth)))))
+        (when (and start (> depth 0))
+          (c-put-font-lock-face start (point) 'font-lock-comment-face)))))
+  nil)
+
+(defun my-c-mode-common-hook ()
+  (font-lock-add-keywords
+   nil
+   '((my-c-mode-font-lock-if0 (0 font-lock-comment-face prepend))) 'add-to-end))
+
+(add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
+
+; Ansi-term Shortcuts
+(global-set-key [f1] 'ansi-term)
+
+; Kill term buffer on exit
+(defadvice term-sentinel (around my-advice-term-sentinel (proc msg))
+  (if (memq (process-status proc) '(signal exit))
+      (let ((buffer (process-buffer proc)))
+        ad-do-it
+        (kill-buffer buffer))
+    ad-do-it))
+(ad-activate 'term-sentinel)
+
+; Make bash default shell
+(defvar my-term-shell "/bin/bash")
+(defadvice ansi-term (before force-bash)
+  (interactive (list my-term-shell)))
+(ad-activate 'ansi-term)
+
+; Make UTF-8 in term
+(defun my-term-use-utf8 ()
+  (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
+(add-hook 'term-exec-hook 'my-term-use-utf8)
+
+; Yank and paste in term
+(defun my-term-paste (&amp ;optional string)
+ (interactive)
+ (process-send-string
+  (get-buffer-process (current-buffer))
+  (if string string (current-kill 0)))))
+
+; Make urls clickable in term
+; Solarized for term
+(defun my-term-hook ()
+  (goto-address-mode)
+  (define-key term-raw-map "\C-y" 'my-term-paste)
+  (let ((base03  "#002b36")
+        (base02  "#073642")
+        (base01  "#586e75")
+        (base00  "#657b83")
+        (base0   "#839496")
+        (base1   "#93a1a1")
+        (base2   "#eee8d5")
+        (base3   "#fdf6e3")
+        (yellow  "#b58900")
+        (orange  "#cb4b16")
+        (red     "#dc322f")
+        (magenta "#d33682")
+        (violet  "#6c71c4")
+        (blue    "#268bd2")
+        (cyan    "#2aa198")
+        (green   "#859900"))
+    (setq ansi-term-color-vector
+          (vconcat `(unspecified ,base02 ,red ,green ,yellow ,blue
+                                  ,magenta ,cyan ,base2)))))
+
+; Add Hook to term
+(add-hook 'term-mode-hook 'my-term-hook)
+
+; Compile color
+(require 'ansi-color)
+(defun colorize-compilation-buffer ()
+  (toggle-read-only)
+  (ansi-color-apply-on-region (point-min) (point-max))
+  (toggle-read-only))
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
+(transient-mark-mode t)
+(global-font-lock-mode t)
+(column-number-mode t)
+(setq blink-cursor-mode t)
+(setq indicate-empty-lines t)
+
+; Ido Modes
+(require 'ido)
+(ido-mode)
+(setq ido-completion-buffer "*Ido Completions*")
+(setq ido-completion-buffer-all-completions t)
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(icomplete-mode 99)
