@@ -15,6 +15,7 @@
 (require 'fill-column-indicator)
 (require 'sr-speedbar)
 (require 'evil)
+(require 'idle-highlight-mode)
 
 ; Packages
 (package-initialize)
@@ -43,33 +44,22 @@
 (add-hook 'after-change-major-mode-hook 'fci-mode)
 (setq fci-rule-width 1)
 (setq fci-rule-column 80)
-(setq fci-rule-color "blue")
+(setq fci-rule-color "white")
 (global-whitespace-mode 1)
 (setq whitespace-style '(face trailing))
 
+; Highlight Mode
+(global-hi-lock-mode 1)
+
 ; Compile Shortcuts
 (define-key global-map [(control meta c)]  'compile)
+(setq shell-file-name "bash")
+(setq shell-command-switch "-ic")
 
 ; Auto complete
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
 (global-auto-complete-mode t)
-
-; Cscope Indexer
-(defun index-files ()
- "Cscope-Index Command"
-(interactive)
-(message "Building Database")
-(shell-command "idx")
-(message  "Done"))
-
-(define-key global-map [(meta shift t)] 'index-files)
-
-; Default Tags Table
-;(setq tags-table-list '("/localetna/himmehra/black/sdk/TAGS"))
-
-; Cscope Database
-;(setq cscope-initial-directory "/localetna/himmehra/LBT-102/sdk")
 
 ; Cscope for Emacs Install external package
 (setq cscope-do-not-update-database t)
@@ -124,9 +114,6 @@
 ; Change yes/no to y/n
 (fset 'yes-or-no-p 'y-or-n-p)
 
-; Indent new lines
-;(global-set-key (kbd "RET") 'newline-and-indent)
-
 ; Auto revert-buffers
 (global-auto-revert-mode 1)
 
@@ -170,6 +157,9 @@
                        'vertical-border
                        (make-glyph-code ?|))
 
+;; Set face for highlight regex color
+(setq hi-lock-auto-select-face t)
+
 ; Linum Mode
 (setq linum-format (lambda
                      (line)
@@ -184,15 +174,6 @@
                               line)
                       'face
                       'linum)))
-
-; Custom faces
-(custom-set-variables)
-(custom-set-faces
-'(font-lock-string-face ((((class color) (min-colors 88) (background dark)) (:foreground "green"))))
-'(font-lock-type-face ((((class color) (min-colors 88) (background dark)) (:foreground "magenta"))))
-'(isearch ((((class color) (min-colors 88) (background dark)) (:background "red" :foreground "white"))))
-'(lazy-highlight ((((class color) (min-colors 88) (background dark)) (:background "white"))))
-'(region ((((class color) (min-colors 88) (background dark)) (:background "blue" :foreground "white")))))
 
 ; Speedbar
 (global-set-key (kbd "<f6>") 'sr-speedbar-toggle)
@@ -328,3 +309,25 @@
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
 (icomplete-mode 99)
+
+;; Cplink
+(defun cplink-revert-buffer()
+  "cplink current-buffer and revert it"
+  (interactive)
+  (call-process-shell-command (format "ww -copy %s" buffer-file-name))
+  (revert-buffer buffer-file-name t)
+  (message "cplinked file"))
+
+(global-set-key (kbd "C-c r") 'cplink-revert-buffer)
+
+;; imenu - Jump to definition in same File
+(global-set-key (kbd "C-c d") 'imenu)
+
+;; No confirmation on revert
+(setq revert-without-query '(".*"))
+
+
+(custom-set-variables)
+(custom-set-faces
+ '(isearch ((((class color) (min-colors 8)) (:background "yellow" :foreground "black"))))
+ '(lazy-highlight ((((class color) (min-colors 8)) (:background "yellow" :foreground "black")))))
