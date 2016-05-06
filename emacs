@@ -331,3 +331,9 @@
 (custom-set-faces
  '(isearch ((((class color) (min-colors 8)) (:background "yellow" :foreground "black"))))
  '(lazy-highlight ((((class color) (min-colors 8)) (:background "yellow" :foreground "black")))))
+
+; Keep search highlighted always
+(setq lazy-highlight-cleanup nil)
+
+; Speedbar on left
+(setq sr-speedbar-right-side nil)
