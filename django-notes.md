@@ -1,5 +1,5 @@
 # Django Notes -
-    
+
 ### Creating vitual environment
     $ python3 -m venv myvenv
     $ virtualenv --python=python3.4 myvenv
@@ -22,10 +22,10 @@
 ### Init web app
     (myvenv) ~/djangogirls$ python manage.py startapp blog
     Add app to installed apps in settings.py in website
-    
+
 ### Make database fields
     Make changes in models.py
-        
+
 ## Make database table
     (myvenv) ~/djangogirls$ python manage.py makemigrations blog
     Register your model in web appp admin.py
