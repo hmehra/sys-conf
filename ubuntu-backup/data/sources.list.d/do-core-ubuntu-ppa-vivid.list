@@ -1,0 +1,2 @@
+deb http://ppa.launchpad.net/do-core/ppa/ubuntu wily main # disabled on upgrade to wily
+deb-src http://ppa.launchpad.net/do-core/ppa/ubuntu vivid main
