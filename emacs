@@ -4,7 +4,7 @@
 ; Load Path
 (add-to-list 'load-path "~/.myemacs/")
 (add-to-list 'load-path "~/.myemacs/evil")
-(add-to-list 'load-path "~/.emacs.d/")
+(add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'load-path "~/.emacs.d/cl-lib")
 
 ; Load files
@@ -18,7 +18,20 @@
 (require 'idle-highlight-mode)
 
 ; Packages
+(require 'package)
+(setq package-enable-at-startup nil)
+(setq package-archives '())
 (package-initialize)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives
+             '("gnu" . "http://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives
+             '("marmalade" . "https://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives
+             '("org" . "http://orgmode.org/elpa/") t)
+(add-to-list 'package-archives
+             '("tromey" . "http://tromey.com/elpa/") t)
 
 ; Editing Modes
 (setq auto-mode-alist (cons '("\\.java$" . java-mode) auto-mode-alist))
@@ -44,6 +57,7 @@
 (add-hook 'after-change-major-mode-hook 'fci-mode)
 (setq fci-rule-width 1)
 (setq fci-rule-column 80)
+(setq fci-handle-truncate-lines nil)
 (setq fci-rule-color "white")
 (global-whitespace-mode 1)
 (setq whitespace-style '(face trailing))
@@ -53,12 +67,13 @@
 
 ; Compile Shortcuts
 (define-key global-map [(control meta c)]  'compile)
+(define-key global-map [(control k)]  'kill-whole-line)
 (setq shell-file-name "bash")
 (setq shell-command-switch "-ic")
 
 ; Auto complete
 (require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 (global-auto-complete-mode t)
 
 ; Cscope for Emacs Install external package
@@ -326,14 +341,41 @@
 ;; No confirmation on revert
 (setq revert-without-query '(".*"))
 
-
-(custom-set-variables)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages (quote (ac-helm))))
 (custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(isearch ((((class color) (min-colors 8)) (:background "yellow" :foreground "black"))))
- '(lazy-highlight ((((class color) (min-colors 8)) (:background "yellow" :foreground "black")))))
+ '(lazy-highlight ((((class color) (min-colors 8)) (:background "yellow" :foreground "black"))))
+ '(region ((((class color) (min-colors 8)) (:background "green" :foreground "black")))))
 
 ; Keep search highlighted always
 (setq lazy-highlight-cleanup nil)
 
 ; Speedbar on left
 (setq sr-speedbar-right-side nil)
+
+; Smooth scrolling
+(setq scroll-step 1)
+
+; Collapse/Expand functions
+(defun hs-enable-and-toggle ()
+  (interactive)
+  (hs-minor-mode 1)
+  (hs-toggle-hiding))
+(defun hs-enable-and-hideshow-all (&optional arg)
+  "Hide all blocks. If prefix argument is given, show all blocks."
+  (interactive "P")
+  (hs-minor-mode 1)
+  (if arg
+      (hs-show-all)
+      (hs-hide-all)))
+(global-set-key (kbd "C-c <up>")    'hs-enable-and-toggle)
+(global-set-key (kbd "C-c <down>")  'hs-enable-and-hideshow-all)
