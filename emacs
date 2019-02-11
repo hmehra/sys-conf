@@ -1,27 +1,17 @@
 ;;; Emacs Configuration File
+
+;;; Code:
+
+;; Username
 (setq user-full-name "Himanshu Mehra")
 
-; Load Path
+;; Load Path
 (add-to-list 'load-path "~/.myemacs/")
-(add-to-list 'load-path "~/.myemacs/evil")
-(add-to-list 'load-path "~/.emacs.d/lisp")
-(add-to-list 'load-path "~/.emacs.d/cl-lib")
 
-; Load files
-(require 'package)
-(require 'cl-lib)
-(require 'uniquify)
-(require 'xcscope)
-(require 'fill-column-indicator)
-(require 'sr-speedbar)
-(require 'evil)
-(require 'idle-highlight-mode)
-
-; Packages
+;; Packages
 (require 'package)
 (setq package-enable-at-startup nil)
 (setq package-archives '())
-(package-initialize)
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives
@@ -33,16 +23,55 @@
 (add-to-list 'package-archives
              '("tromey" . "http://tromey.com/elpa/") t)
 
+;; activate all the packages
+(package-initialize)
+
+;; list the packages you want
+(setq package-list
+  '(xcscope auto-complete flycheck fill-column-indicator yaml-mode magit))
+
+;; Load files
+(require 'yaml-mode)
+(require 'cl-lib)
+(require 'uniquify)
+(require 'fill-column-indicator)
+(require 'xcscope)
+
+;; fetch the list of packages available
+(unless package-archive-contents
+  (package-refresh-contents))
+
+;; install the missing packages
+(dolist (package package-list)
+  (unless (package-installed-p package)
+    (package-install package)))
+
+; Auto-complete
+(ac-config-default)
+(global-auto-complete-mode t)
+
+; Tango dark theme for now
+(load-theme 'tango-dark)
+
 ; Editing Modes
-(setq auto-mode-alist (cons '("\\.java$" . java-mode) auto-mode-alist))
-(setq auto-mode-alist (cons '("\\.cxx$" . c++-mode) auto-mode-alist))
-(setq auto-mode-alist (cons '("\\.hxx$" . c++-mode) auto-mode-alist))
-(setq auto-mode-alist (cons '("\\.c$" . c-mode) auto-mode-alist))
-(setq auto-mode-alist (cons '("\\.pl$" . perl-mode) auto-mode-alist))
-(setq auto-mode-alist (cons '("\\.pm$" . perl-mode) auto-mode-alist))
-(setq auto-mode-alist (cons '("\\.txt$" . text-mode) auto-mode-alist))
-(setq auto-mode-alist (cons '("\\.py$" . python-mode) auto-mode-alist))
-(setq auto-mode-alist (cons '("\\.json\\'" . js-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.c$"       . c-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.cxx$"     . c++-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.hxx$"     . c++-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.java$"    . java-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.pl$"      . perl-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.pm$"      . perl-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.txt$"     . text-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.py$"      . python-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.json\\'"  . js-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.yml\\'"   . yaml-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.proto\\'" . protobuf-mode) auto-mode-alist))
+
+; Stop auto indent
+(setq c-basic-offset 2)
+(turn-on-font-lock)
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+(setq indent-line-function 'insert-tab)
 
 ; Remove initial splash-screen
 (setq initial-scratch-message "")
@@ -56,9 +85,9 @@
 ; Fci Mode
 (add-hook 'after-change-major-mode-hook 'fci-mode)
 (setq fci-rule-width 1)
-(setq fci-rule-column 80)
+(setq fci-rule-column 79)
 (setq fci-handle-truncate-lines nil)
-(setq fci-rule-color "white")
+(setq fci-rule-color "red")
 (global-whitespace-mode 1)
 (setq whitespace-style '(face trailing))
 
@@ -71,12 +100,8 @@
 (setq shell-file-name "bash")
 (setq shell-command-switch "-ic")
 
-; Auto complete
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-(global-auto-complete-mode t)
-
-; Cscope for Emacs Install external package
+;; Cscope for Emacs Install external package
+(cscope-setup)
 (setq cscope-do-not-update-database t)
 (setq cscope-display-cscope-buffer nil)
 (define-key global-map [(meta shift d)]  'cscope-set-initial-directory)
@@ -85,21 +110,20 @@
 (define-key global-map [(meta shift g)]  'cscope-find-global-definition)
 (define-key global-map [(meta shift n)]  'cscope-next-symbol)
 (define-key global-map [(meta shift p)]  'cscope-prev-symbol)
-(define-key global-map [(meta c)]        'cscope-display-buffer)
+(define-key global-map [(meta shift c)]  'cscope-display-buffer)
 (define-key global-map [(meta shift b)]
   'cscope-find-global-definition-no-prompting)
 (define-key global-map [(meta shift x)]
   'cscope-find-functions-calling-this-function)
 
+; CTags keys
+;; M-. <RET>          Jump to the tag underneath the cursor
+;; M-. <tag> <RET>    Search for a particular tag
+;; C-u M-.            Find the next definition for the last tag
+;; M-*                Pop back to where you previously invoked "M-."
+
 ; Turn on extra whitespace highlight
 (setq-default show-trailing-whitespace t)
-
-; Stop auto indent
-(setq c-basic-offset 4)
-(turn-on-font-lock)
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 4)
-(setq indent-line-function 'insert-tab)
 
 ; Toggle window dedication
 (defun toggle-window-dedicated ()
@@ -138,19 +162,31 @@
 ; Highlight matching braces
 (show-paren-mode 1)
 
-; Display details about closing brace
-(defadvice show-paren-function (after my-echo-paren-matching-line activate)
-  "If a matching paren is off-screen, echo the matching line."
-  (when (char-equal (char-syntax (char-before (point))) ?\))
-    (let ((matching-text (blink-matching-open)))
-      (when matching-text
-        (message matching-text)))))
+;; Display details about closing brace
+(defadvice show-paren-function
+    (after show-matching-paren-offscreen activate)
+  "If the matching paren is offscreen, show the matching line in the
+    echo area. Has no effect if the character before point is not of
+    the syntax class ')'."
+  (interactive)
+  (let* (
+         (cb (char-before (point)))
+         (matching-text (and cb
+                             (char-equal (char-syntax cb) ?\) )
+                             (blink-matching-open)
+                             )
+                        )
+         )
+    )
+  )
 
 ; Enable word wrap
 (global-visual-line-mode 1)
 
 ; Remove menu bar
 (menu-bar-mode -1)
+(tool-bar-mode -1)
+(toggle-scroll-bar -1)
 
 ; Represent space by .
 (setq whitespace-display-mappings '((space-mark ?\  [?.])
@@ -268,11 +304,11 @@
 (add-hook 'term-exec-hook 'my-term-use-utf8)
 
 ; Yank and paste in term
-(defun my-term-paste (&amp ;optional string)
- (interactive)
- (process-send-string
-  (get-buffer-process (current-buffer))
-  (if string string (current-kill 0)))))
+;; (defun my-term-paste (&amp ;optional string)
+;;  (interactive)
+;;  (process-send-string
+;;   (get-buffer-process (current-buffer))
+;;   (if string string (current-kill 0)))))
 
 ; Make urls clickable in term
 ; Solarized for term
@@ -300,7 +336,7 @@
                                   ,magenta ,cyan ,base2)))))
 
 ; Add Hook to term
-(add-hook 'term-mode-hook 'my-term-hook)
+; (add-hook 'term-mode-hook 'my-term-hook)
 
 ; Compile color
 (require 'ansi-color)
@@ -327,7 +363,7 @@
 
 ;; Cplink
 (defun cplink-revert-buffer()
-  "cplink current-buffer and revert it"
+  "cplink current-buffer and revert it."
   (interactive)
   (call-process-shell-command (format "ww -copy %s" buffer-file-name))
   (revert-buffer buffer-file-name t)
@@ -341,23 +377,9 @@
 ;; No confirmation on revert
 (setq revert-without-query '(".*"))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages (quote (ac-helm))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(isearch ((((class color) (min-colors 8)) (:background "yellow" :foreground "black"))))
- '(lazy-highlight ((((class color) (min-colors 8)) (:background "yellow" :foreground "black"))))
- '(region ((((class color) (min-colors 8)) (:background "green" :foreground "black")))))
-
 ; Keep search highlighted always
 (setq lazy-highlight-cleanup nil)
+(setq isearch-allow-scroll t)
 
 ; Speedbar on left
 (setq sr-speedbar-right-side nil)
@@ -370,6 +392,7 @@
   (interactive)
   (hs-minor-mode 1)
   (hs-toggle-hiding))
+
 (defun hs-enable-and-hideshow-all (&optional arg)
   "Hide all blocks. If prefix argument is given, show all blocks."
   (interactive "P")
@@ -377,5 +400,62 @@
   (if arg
       (hs-show-all)
       (hs-hide-all)))
+
 (global-set-key (kbd "C-c <up>")    'hs-enable-and-toggle)
 (global-set-key (kbd "C-c <down>")  'hs-enable-and-hideshow-all)
+
+; Clang formatter
+(setq clang-format-executable
+      "~/workspace/toolchain/x86_64-linux/6.0/bin/clang-format")
+(fset 'c-indent-region 'clang-format-region)
+(global-set-key (kbd "C-c TAB") 'clang-format-region)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(list-command-history-max 1000)
+ '(package-selected-packages
+   (quote
+    (auto-complete-etags auto-complete-clang smex nyan-mode xcscope w3 powerline protobuf-mode magit yaml-mode sr-speedbar flycheck fill-column-indicator clang-format auto-complete)))
+ '(send-mail-function (quote mailclient-send-it)))
+
+;; Better mouse
+;; scroll one line at a time (less "jumpy" than defaults)
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+(setq scroll-step 1) ;; keyboard scroll one line at a time
+
+; Tramp use ssh
+(setq tramp-default-method "ssh")
+
+;; COT upload
+(defun cot-upload ()
+  "Uploads the current changeset to Gerrit."
+  (interactive)
+  (shell-command "cot upload"))
+
+;; Magit Key bindings
+(global-set-key (kbd "C-c m s") 'magit-status)
+(global-set-key (kbd "C-c m d") 'magit-diff-dwim)
+(global-set-key (kbd "C-c m p") 'magit-pull-from-upstream)
+(global-set-key (kbd "C-c m l") 'magit-log-all)
+(global-set-key (kbd "C-c m u") 'cot-upload)
+
+;;; Powerline
+(powerline-default-theme)
+
+;; Nyan mode
+; (nyan-mode 1)
+
+(provide '.emacs)
+;;; .emacs ends here
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
