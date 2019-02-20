@@ -31,6 +31,7 @@
   '(xcscope auto-complete flycheck fill-column-indicator yaml-mode magit))
 
 ;; Load files
+(require 'helm)
 (require 'yaml-mode)
 (require 'cl-lib)
 (require 'uniquify)
@@ -82,8 +83,11 @@
 ; Unique Names
 (setq uniquify-buffer-name-style 'forward)
 
-; Fci Mode
-(add-hook 'after-change-major-mode-hook 'fci-mode)
+;; Fci Mode
+(define-globalized-minor-mode global-fci-mode fci-mode
+  (lambda ()
+    (if buffer-file-name (fci-mode 1))))
+(global-fci-mode 1)
 (setq fci-rule-width 1)
 (setq fci-rule-column 79)
 (setq fci-handle-truncate-lines nil)
@@ -226,7 +230,8 @@
                       'face
                       'linum)))
 
-; Speedbar
+;; Speedbar
+;; If variables are not seen, run semantic-force-refresh
 (global-set-key (kbd "<f6>") 'sr-speedbar-toggle)
 
 ; Move between emacs buffer
@@ -304,11 +309,7 @@
 (add-hook 'term-exec-hook 'my-term-use-utf8)
 
 ; Yank and paste in term
-;; (defun my-term-paste (&amp ;optional string)
-;;  (interactive)
-;;  (process-send-string
-;;   (get-buffer-process (current-buffer))
-;;   (if string string (current-kill 0)))))
+;; Just make the terminal text mode based using C-x C-j
 
 ; Make urls clickable in term
 ; Solarized for term
@@ -353,13 +354,13 @@
 (setq indicate-empty-lines t)
 
 ; Ido Modes
-(require 'ido)
-(ido-mode)
-(setq ido-completion-buffer "*Ido Completions*")
-(setq ido-completion-buffer-all-completions t)
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(icomplete-mode 99)
+;; (require 'ido)
+;; (ido-mode)
+;; (setq ido-completion-buffer "*Ido Completions*")
+;; (setq ido-completion-buffer-all-completions t)
+;; (setq ido-enable-flex-matching t)
+;; (setq ido-everywhere t)
+;; (icomplete-mode 99)
 
 ;; Cplink
 (defun cplink-revert-buffer()
@@ -380,9 +381,6 @@
 ; Keep search highlighted always
 (setq lazy-highlight-cleanup nil)
 (setq isearch-allow-scroll t)
-
-; Speedbar on left
-(setq sr-speedbar-right-side nil)
 
 ; Smooth scrolling
 (setq scroll-step 1)
@@ -418,7 +416,7 @@
  '(list-command-history-max 1000)
  '(package-selected-packages
    (quote
-    (auto-complete-etags auto-complete-clang smex nyan-mode xcscope w3 powerline protobuf-mode magit yaml-mode sr-speedbar flycheck fill-column-indicator clang-format auto-complete)))
+    (helm rainbow-delimiters auto-complete-etags auto-complete-clang smex nyan-mode xcscope w3 powerline protobuf-mode magit yaml-mode sr-speedbar flycheck fill-column-indicator clang-format auto-complete)))
  '(send-mail-function (quote mailclient-send-it)))
 
 ;; Better mouse
@@ -449,6 +447,29 @@
 
 ;; Nyan mode
 ; (nyan-mode 1)
+
+;; Change window sizes
+(global-set-key (kbd "<C-S-up>") 'shrink-window)
+(global-set-key (kbd "<C-S-down>") 'enlarge-window)
+(global-set-key (kbd "<C-S-left>") 'shrink-window-horizontally)
+(global-set-key (kbd "<C-S-right>") 'enlarge-window-horizontally)
+
+;; Helm config
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
+(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(helm-autoresize-mode 1)
+(setq helm-split-window-in-side-p t)
+(helm-mode 1)
+
+;; Helm at bottom of the screen
+(add-to-list 'display-buffer-alist
+                    `(,(rx bos "*helm" (* not-newline) "*" eos)
+                         (display-buffer-in-side-window)
+                         (inhibit-same-window . t)
+                         (window-height . 0.4)))
 
 (provide '.emacs)
 ;;; .emacs ends here
