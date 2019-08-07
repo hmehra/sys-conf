@@ -7,7 +7,9 @@ rm -rf $HOME/.emacs       \
        $HOME/.emacsbackup
 
 # Add files to respective locations
-cp emacs $HOME/.emacs
+mkdir -p $HOME/.emacs.d
+cp myinit.el $HOME/.emacs.d
+cp myinit.org $HOME/.emacs.d
 cp tmux.conf $HOME/.tmux.conf
 cp gitconfig $HOME/.gitconfig
 cp -r myemacs $HOME/.myemacs

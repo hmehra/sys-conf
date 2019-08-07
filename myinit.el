@@ -1,58 +1,165 @@
-;;; Emacs Configuration File
+(use-package which-key
+             :ensure t
+             :config
+             (which-key-mode))
 
-;;; Code:
+(use-package try
+  :ensure t)
 
-;; Username
-(setq user-full-name "Himanshu Mehra")
+(use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
-;; Load Path
-(add-to-list 'load-path "~/.myemacs/")
+(use-package undo-tree
+  :ensure t
+  :config
+  (global-undo-tree-mode))
 
-;; Packages
-(require 'package)
-(setq package-enable-at-startup nil)
-(setq package-archives '())
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(add-to-list 'package-archives
-             '("gnu" . "http://elpa.gnu.org/packages/"))
-(add-to-list 'package-archives
-             '("marmalade" . "https://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives
-             '("org" . "http://orgmode.org/elpa/") t)
-(add-to-list 'package-archives
-             '("tromey" . "http://tromey.com/elpa/") t)
+(use-package auto-complete
+  :ensure t
+  :config
+  (ac-config-default))
 
-;; activate all the packages
-(package-initialize)
+(defun generate-tags ()
+  "Generate Gtags and protocol documentation."
+  (interactive)
+  (async-shell-command "~/bin/tags"))
+(global-set-key (kbd "C-c g g") 'generate-tags)
 
-;; list the packages you want
-(setq package-list
-  '(xcscope auto-complete flycheck fill-column-indicator yaml-mode magit))
+(use-package swiper-helm
+  :ensure t
+  :config
+  (global-set-key (kbd "C-s") 'swiper-isearch))
+
+(global-hl-line-mode)
+
+(defun load-init-file ()
+  "Load myinit.org for editing"
+  (interactive)
+  (find-file "~/.emacs.d/myinit.org"))
+
+(global-set-key (kbd "C-c i") 'load-init-file)
+
+;; (use-package flycheck
+;;   :ensure t
+;;   :init (global-flycheck-mode))
+
+(use-package magit
+  :ensure t
+  :config
+  (global-set-key (kbd "C-c m s") 'magit-status)
+  (global-set-key (kbd "C-c m d") 'magit-diff-dwim)
+  (global-set-key (kbd "C-c m p") 'magit-pull-from-upstream)
+  (global-set-key (kbd "C-c m l") 'magit-log-all)
+  (global-set-key (kbd "C-c m b") 'magit-blame))
+
+(defun cot-upload ()
+  "Uploads the current changeset to Gerrit."
+  (interactive)
+  (async-shell-command "cot upload"))
+
+(global-set-key (kbd "C-c m u") 'cot-upload)
+
+(load-theme 'monokai t)
+
+(global-display-line-numbers-mode 1)
+
+(use-package treemacs
+  :ensure t
+  :defer t
+  :init
+  (with-eval-after-load 'winum
+    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+  :config
+  (progn
+    (setq treemacs-collapse-dirs                 (if (executable-find "python3") 3 0)
+	  treemacs-deferred-git-apply-delay      0.5
+	  treemacs-display-in-side-window        t
+	  treemacs-eldoc-display                 t
+	  treemacs-file-event-delay              5000
+	  treemacs-file-follow-delay             0.2
+	  treemacs-follow-after-init             t
+	  treemacs-git-command-pipe              ""
+	  treemacs-goto-tag-strategy             'refetch-index
+	  treemacs-indentation                   2
+	  treemacs-indentation-string            " "
+	  treemacs-is-never-other-window         nil
+	  treemacs-max-git-entries               5000
+	  treemacs-missing-project-action        'ask
+	  treemacs-no-png-images                 nil
+	  treemacs-no-delete-other-windows       t
+	  treemacs-project-follow-cleanup        nil
+	  treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+	  treemacs-recenter-distance             0.1
+	  treemacs-recenter-after-file-follow    nil
+	  treemacs-recenter-after-tag-follow     nil
+	  treemacs-recenter-after-project-jump   'always
+	  treemacs-recenter-after-project-expand 'on-distance
+	  treemacs-show-cursor                   nil
+	  treemacs-show-hidden-files             t
+	  treemacs-silent-filewatch              nil
+	  treemacs-silent-refresh                nil
+	  treemacs-sorting                       'alphabetic-desc
+	  treemacs-space-between-root-nodes      t
+	  treemacs-tag-follow-cleanup            t
+	  treemacs-tag-follow-delay              1.5
+	  treemacs-width                         35)
+
+    ;; The default width and height of the icons is 22 pixels. If you are
+    ;; using a Hi-DPI display, uncomment this to double the icon size.
+    ;;(treemacs-resize-icons 44)
+
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t)
+    (treemacs-fringe-indicator-mode t)
+    (pcase (cons (not (null (executable-find "git")))
+		 (not (null (executable-find "python3"))))
+      (`(t . t)
+       (treemacs-git-mode 'deferred))
+      (`(t . _)
+       (treemacs-git-mode 'simple))))
+  :bind
+  (:map global-map
+	("M-0"       . treemacs-select-window)
+	("C-x t 1"   . treemacs-delete-other-windows)
+	("C-x t t"   . treemacs)
+	("C-x t B"   . treemacs-bookmark)
+	("C-x t C-t" . treemacs-find-file)
+	("C-x t M-t" . treemacs-find-tag)))
+
+(use-package treemacs-projectile
+  :after treemacs projectile
+  :ensure t)
+
+(use-package treemacs-icons-dired
+  :after treemacs dired
+  :ensure t
+  :config (treemacs-icons-dired-mode))
+
+(use-package treemacs-magit
+  :after treemacs magit
+  :ensure t)
+
+(use-package doom-modeline
+      :ensure t
+      :hook (after-init . doom-modeline-mode))
+
+(defun beautify-json ()
+  (interactive)
+  (let ((b (if mark-active (min (point) (mark)) (point-min)))
+        (e (if mark-active (max (point) (mark)) (point-max))))
+    (shell-command-on-region b e
+     "python -m json.tool" (current-buffer) t)))
 
 ;; Load files
+(require 'cc-mode)
 (require 'helm)
 (require 'yaml-mode)
 (require 'cl-lib)
 (require 'uniquify)
 (require 'fill-column-indicator)
 (require 'xcscope)
-
-;; fetch the list of packages available
-(unless package-archive-contents
-  (package-refresh-contents))
-
-;; install the missing packages
-(dolist (package package-list)
-  (unless (package-installed-p package)
-    (package-install package)))
-
-; Auto-complete
-(ac-config-default)
-(global-auto-complete-mode t)
-
-; Tango dark theme for now
-(load-theme 'tango-dark)
 
 ; Editing Modes
 (setq auto-mode-alist (cons '("\\.c$"       . c-mode) auto-mode-alist))
@@ -66,13 +173,6 @@
 (setq auto-mode-alist (cons '("\\.json\\'"  . js-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.yml\\'"   . yaml-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.proto\\'" . protobuf-mode) auto-mode-alist))
-
-; Stop auto indent
-(setq c-basic-offset 2)
-(turn-on-font-lock)
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 2)
-(setq indent-line-function 'insert-tab)
 
 ; Remove initial splash-screen
 (setq initial-scratch-message "")
@@ -102,7 +202,7 @@
 (define-key global-map [(control meta c)]  'compile)
 (define-key global-map [(control k)]  'kill-whole-line)
 (setq shell-file-name "bash")
-(setq shell-command-switch "-ic")
+(setq shell-command-switch "-lc")
 
 ;; Cscope for Emacs Install external package
 (cscope-setup)
@@ -119,12 +219,6 @@
   'cscope-find-global-definition-no-prompting)
 (define-key global-map [(meta shift x)]
   'cscope-find-functions-calling-this-function)
-
-; CTags keys
-;; M-. <RET>          Jump to the tag underneath the cursor
-;; M-. <tag> <RET>    Search for a particular tag
-;; C-u M-.            Find the next definition for the last tag
-;; M-*                Pop back to where you previously invoked "M-."
 
 ; Turn on extra whitespace highlight
 (setq-default show-trailing-whitespace t)
@@ -197,11 +291,6 @@
                                     (newline-mark ?\n [?$ ?\n])
                                     (tab-mark ?\t [?\\ ?\t])))
 
-; Make Comments Red Emacs 22 or below
-(global-font-lock-mode 1)
-(setq font-lock-maximum-decoration t)
-(set-face-foreground 'font-lock-comment-face "red")
-
 ; Column Number Modes
 (setq column-number-mode t)
 
@@ -231,7 +320,6 @@
                       'linum)))
 
 ;; Speedbar
-;; If variables are not seen, run semantic-force-refresh
 (global-set-key (kbd "<f6>") 'sr-speedbar-toggle)
 
 ; Move between emacs buffer
@@ -353,25 +441,6 @@
 (setq blink-cursor-mode t)
 (setq indicate-empty-lines t)
 
-; Ido Modes
-;; (require 'ido)
-;; (ido-mode)
-;; (setq ido-completion-buffer "*Ido Completions*")
-;; (setq ido-completion-buffer-all-completions t)
-;; (setq ido-enable-flex-matching t)
-;; (setq ido-everywhere t)
-;; (icomplete-mode 99)
-
-;; Cplink
-(defun cplink-revert-buffer()
-  "cplink current-buffer and revert it."
-  (interactive)
-  (call-process-shell-command (format "ww -copy %s" buffer-file-name))
-  (revert-buffer buffer-file-name t)
-  (message "cplinked file"))
-
-(global-set-key (kbd "C-c r") 'cplink-revert-buffer)
-
 ;; imenu - Jump to definition in same File
 (global-set-key (kbd "C-c d") 'imenu)
 
@@ -404,20 +473,9 @@
 
 ; Clang formatter
 (setq clang-format-executable
-      "~/workspace/toolchain/x86_64-linux/6.0/bin/clang-format")
+      "/home/cohesity/workspace/toolchain/x86_64-linux/llvm-latest/bin/clang-format")
 (fset 'c-indent-region 'clang-format-region)
 (global-set-key (kbd "C-c TAB") 'clang-format-region)
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(list-command-history-max 1000)
- '(package-selected-packages
-   (quote
-    (helm rainbow-delimiters auto-complete-etags auto-complete-clang smex nyan-mode xcscope w3 powerline protobuf-mode magit yaml-mode sr-speedbar flycheck fill-column-indicator clang-format auto-complete)))
- '(send-mail-function (quote mailclient-send-it)))
 
 ;; Better mouse
 ;; scroll one line at a time (less "jumpy" than defaults)
@@ -433,20 +491,7 @@
 (defun cot-upload ()
   "Uploads the current changeset to Gerrit."
   (interactive)
-  (shell-command "cot upload"))
-
-;; Magit Key bindings
-(global-set-key (kbd "C-c m s") 'magit-status)
-(global-set-key (kbd "C-c m d") 'magit-diff-dwim)
-(global-set-key (kbd "C-c m p") 'magit-pull-from-upstream)
-(global-set-key (kbd "C-c m l") 'magit-log-all)
-(global-set-key (kbd "C-c m u") 'cot-upload)
-
-;;; Powerline
-(powerline-default-theme)
-
-;; Nyan mode
-; (nyan-mode 1)
+  (async-shell-command "cot upload"))
 
 ;; Change window sizes
 (global-set-key (kbd "<C-S-up>") 'shrink-window)
@@ -455,8 +500,7 @@
 (global-set-key (kbd "<C-S-right>") 'enlarge-window-horizontally)
 
 ;; Helm config
-(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
-(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
 (global-set-key (kbd "M-x") 'helm-M-x)
@@ -470,13 +514,41 @@
                          (display-buffer-in-side-window)
                          (inhibit-same-window . t)
                          (window-height . 0.4)))
-
-(provide '.emacs)
-;;; .emacs ends here
-
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
+;; Helm Gtags
+(setq
+ helm-gtags-ignore-case t
+ helm-gtags-auto-update t
+ helm-gtags-use-input-at-cursor t
+ helm-gtags-pulse-at-cursor t
+ helm-gtags-prefix-key "\C-cg"
+ helm-gtags-suggested-key-mapping t
  )
+
+(require 'helm-gtags)
+;; Enable helm-gtags-mode
+(add-hook 'dired-mode-hook 'helm-gtags-mode)
+(add-hook 'eshell-mode-hook 'helm-gtags-mode)
+(add-hook 'c-mode-hook 'helm-gtags-mode)
+(add-hook 'c++-mode-hook 'helm-gtags-mode)
+(add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+(define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+(define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+(define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+(define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+(define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+(define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
+
+;; Projectile
+(projectile-mode +1)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(setq projectile-completion-system 'helm)
+
+;; Add spell check to comments
+(add-hook 'c-mode-common-hook 'flyspell-prog-mode)
+
+;; Dumb jump
+(dumb-jump-mode)
+
+;; Function name on top
+(semantic-mode 1)

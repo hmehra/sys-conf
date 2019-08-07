@@ -1,17 +1,41 @@
 [user]
 	name = Himanshu Mehra
-	email = hmehra@usc.edu
+	email = hmehra@cohesity.com
+
 [alias]
-    st = status
-    co = checkout
-    br = branch
-    up = rebase
-    ci = commit
+	 st = status
+	 co = checkout
+	 br = branch
+	 up = rebase
+	 ci = commit
+
 [core]
-    editor = emacs -nw
+	editor = emacs -nw
+	excludesfile = /home/cohesity/.gitignore_global
+
 [branch]
 	autosetuprebase = always
+
 [color]
 	ui = auto
+
 [diff]
-    tool = tkdiff
+	tool = tkdiff
+
+[difftool]
+	prompt = false
+
+[grep]
+	extendedRegexp = true
+
+[format]
+	pretty=oneline
+
+[sendemail]
+	smtpserver = smtp.gmail.com
+	smtpuser = hmehra@cohesity.com
+	smtpPass = vadgtgzdgpytkkgy
+	smtpencryption = tls
+	smtpserverport = 587
+	annotate = yes
+	confirm = auto
