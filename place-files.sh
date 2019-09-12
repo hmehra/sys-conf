@@ -8,6 +8,7 @@ rm -rf $HOME/.emacs       \
 
 # Add files to respective locations
 mkdir -p $HOME/.emacs.d
+cp emacs $HOME/.emacs
 cp myinit.el $HOME/.emacs.d
 cp myinit.org $HOME/.emacs.d
 cp tmux.conf $HOME/.tmux.conf
