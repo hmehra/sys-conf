@@ -1,2 +1,0 @@
-deb http://ppa.launchpad.net/rvm/smplayer/ubuntu yakkety main # disabled on upgrade to yakkety
-deb-src http://ppa.launchpad.net/rvm/smplayer/ubuntu xenial main

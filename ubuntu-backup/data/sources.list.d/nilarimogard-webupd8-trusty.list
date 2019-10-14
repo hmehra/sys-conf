@@ -1,2 +1,0 @@
-deb http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu utopic main # disabled on upgrade to utopic
-deb-src http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu trusty main

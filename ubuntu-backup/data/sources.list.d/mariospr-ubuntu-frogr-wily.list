@@ -1,2 +1,0 @@
-deb http://ppa.launchpad.net/mariospr/frogr/ubuntu xenial main # disabled on upgrade to xenial
-deb-src http://ppa.launchpad.net/mariospr/frogr/ubuntu wily main

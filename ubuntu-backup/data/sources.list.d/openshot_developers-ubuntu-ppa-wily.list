@@ -1,2 +1,0 @@
-deb http://ppa.launchpad.net/openshot.developers/ppa/ubuntu xenial main # disabled on upgrade to xenial
-deb-src http://ppa.launchpad.net/openshot.developers/ppa/ubuntu wily main

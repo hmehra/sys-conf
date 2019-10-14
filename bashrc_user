@@ -1,0 +1,17 @@
+# Custom bash shell
+
+# Aliases
+alias ls='lsd'
+
+# Banner
+fortune | cowsay
+
+# Git grep
+gg () {
+    git grep -n "$@"
+}
+
+# Emacs to emacsclient
+emacs() {
+    emacsclient -nw -qa '' -c "$@"
+}
