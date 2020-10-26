@@ -41,10 +41,10 @@
 * Auto complete
 #+BEGIN_SRC emacs-lisp
 
-  (use-package auto-complete
-    :ensure t
-    :config
-    (ac-config-default))
+  ;; (use-package auto-complete
+  ;;   :ensure t
+  ;;   :config
+  ;;   (ac-config-default))
 
 #+END_SRC
 
@@ -91,8 +91,8 @@
 #+BEGIN_SRC emacs-lisp
 
   ;; (use-package flycheck
-  ;;   :ensure t
-  ;;   :init (global-flycheck-mode))
+  ;;    :ensure t
+  ;;    :init (global-flycheck-mode))
 
 #+END_SRC
 
@@ -224,16 +224,29 @@
 
 #+BEGIN_SRC emacs-lisp
 
-(use-package doom-modeline
-      :ensure t
-      :hook (after-init . doom-modeline-mode))
+  ;; (use-package doom-modeline
+  ;;       :ensure t
+  ;;       :hook (after-init . doom-modeline-mode))
 
 #+END_SRC
 
 #+RESULTS:
 | doom-modeline-mode | magit-auto-revert-mode--init-kludge | magit-startup-asserts | magit-version |
 
+* Powerline
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package powerline)
+  (powerline-default-theme)
+
+#+END_SRC
+
+#+RESULTS:
+| %e | (:eval (let* ((active (powerline-selected-window-active)) (mode-line-buffer-id (if active (quote mode-line-buffer-id) (quote mode-line-buffer-id-inactive))) (mode-line (if active (quote mode-line) (quote mode-line-inactive))) (face0 (if active (quote powerline-active0) (quote powerline-inactive0))) (face1 (if active (quote powerline-active1) (quote powerline-inactive1))) (face2 (if active (quote powerline-active2) (quote powerline-inactive2))) (separator-left (intern (format powerline-%s-%s (powerline-current-separator) (car powerline-default-separator-dir)))) (separator-right (intern (format powerline-%s-%s (powerline-current-separator) (cdr powerline-default-separator-dir)))) (lhs (list (powerline-raw %* face0 (quote l)) (when powerline-display-buffer-size (powerline-buffer-size face0 (quote l))) (when powerline-display-mule-info (powerline-raw mode-line-mule-info face0 (quote l))) (powerline-buffer-id (` (mode-line-buffer-id (, face0))) (quote l)) (when (and (boundp (quote which-func-mode)) which-func-mode) (powerline-raw which-func-format face0 (quote l))) (powerline-raw   face0) (funcall separator-left face0 face1) (when (and (boundp (quote erc-track-minor-mode)) erc-track-minor-mode) (powerline-raw erc-modified-channels-object face1 (quote l))) (powerline-major-mode face1 (quote l)) (powerline-process face1) (powerline-minor-modes face1 (quote l)) (powerline-narrow face1 (quote l)) (powerline-raw   face1) (funcall separator-left face1 face2) (powerline-vc face2 (quote r)) (when (bound-and-true-p nyan-mode) (powerline-raw (list (nyan-create)) face2 (quote l))))) (rhs (list (powerline-raw global-mode-string face2 (quote r)) (funcall separator-right face2 face1) (unless window-system (powerline-raw (char-to-string 57505) face1 (quote l))) (powerline-raw %4l face1 (quote l)) (powerline-raw : face1 (quote l)) (powerline-raw %3c face1 (quote r)) (funcall separator-right face1 face0) (powerline-raw   face0) (powerline-raw %6p face0 (quote r)) (when powerline-display-hud (powerline-hud face0 face2)) (powerline-fill face0 0)))) (concat (powerline-render lhs) (powerline-fill face2 (powerline-width rhs)) (powerline-render rhs)))) |
+
 * Beautify JSON
+
 #+BEGIN_SRC emacs-lisp
 
 (defun beautify-json ()
@@ -248,18 +261,115 @@
 #+RESULTS:
 : beautify-json
 
+* Window management
+
+#+BEGIN_SRC emacs-lisp
+
+(setq split-height-threshold nil)
+(setq split-width-threshold 160)
+
+#+END_SRC
+
+#+RESULTS:
+: 160
+
+* Helm
+#+BEGIN_SRC emacs-lisp
+
+  (use-package helm
+  :ensure t)
+
+  (define-key helm-map (kbd "TAB") #'helm-execute-persistent-action)
+  (define-key helm-map (kbd "<tab>") #'helm-execute-persistent-action)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (helm-autoresize-mode 1)
+  (setq helm-split-window-in-side-p t)
+  (helm-mode 1)
+
+  ;; Helm at bottom of the screen
+  (add-to-list 'display-buffer-alist
+                      `(,(rx bos "*helm" (* not-newline) "*" eos)
+                           (display-buffer-in-side-window)
+                           (inhibit-same-window . t)
+                           (window-height . 0.4)))
+
+
+#+END_SRC
+
+#+RESULTS:
+| \`\*helm.*\*\' | (display-buffer-in-side-window) | (inhibit-same-window . t) | (window-height . 0.4) |
+
+* Helm + GTags
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq
+   helm-gtags-ignore-case t
+   helm-gtags-auto-update t
+   helm-gtags-use-input-at-cursor t
+   helm-gtags-pulse-at-cursor t
+   helm-gtags-prefix-key "\C-cg"
+   helm-gtags-suggested-key-mapping t
+   )
+
+  (require 'helm-gtags)
+  (add-hook 'dired-mode-hook 'helm-gtags-mode)
+  (add-hook 'eshell-mode-hook 'helm-gtags-mode)
+  (add-hook 'c-mode-hook 'helm-gtags-mode)
+  (add-hook 'c++-mode-hook 'helm-gtags-mode)
+  (add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+  (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+  (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+  (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+  (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+  (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+  (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
+
+#+END_SRC
+
+#+RESULTS:
+: helm-gtags-next-history
+
+* Company mode
+
+#+BEGIN_SRC emacs-lisp
+   (use-package company
+     :ensure t
+     :config
+     (add-hook 'after-init-hook 'global-company-mode)
+     (setq company-backends '(company-gtags))
+     (global-set-key (kbd "C-c c") 'company-complete))
+#+END_SRC
+
+#+RESULTS:
+: t
+
+* Flycheck Clang tidy
+#+BEGIN_SRC emacs-lisp
+
+  ;; (use-package flycheck-clang-tidy
+  ;; :after flycheck
+  ;; :hook
+  ;; (flycheck-mode . flycheck-clang-tidy-setup))
+
+#+END_SRC
+
+#+RESULTS:
+| flycheck-clang-tidy-setup | flycheck-mode-set-explicitly |
+
 * Rest
 
 #+BEGIN_SRC emacs-lisp
 
   ;; Load files
   (require 'cc-mode)
-  (require 'helm)
   (require 'yaml-mode)
   (require 'cl-lib)
   (require 'uniquify)
   (require 'fill-column-indicator)
-  (require 'xcscope)
 
   ; Editing Modes
   (setq auto-mode-alist (cons '("\\.c$"       . c-mode) auto-mode-alist))
@@ -299,10 +409,7 @@
   (global-hi-lock-mode 1)
 
   ; Compile Shortcuts
-  (define-key global-map [(control meta c)]  'compile)
   (define-key global-map [(control k)]  'kill-whole-line)
-  (setq shell-file-name "bash")
-  (setq shell-command-switch "-lc")
 
   ;; Cscope for Emacs Install external package
   (cscope-setup)
@@ -599,46 +706,6 @@
   (global-set-key (kbd "<C-S-left>") 'shrink-window-horizontally)
   (global-set-key (kbd "<C-S-right>") 'enlarge-window-horizontally)
 
-  ;; Helm config
-  (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
-  (global-set-key (kbd "C-x C-f") 'helm-find-files)
-  (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (helm-autoresize-mode 1)
-  (setq helm-split-window-in-side-p t)
-  (helm-mode 1)
-
-  ;; Helm at bottom of the screen
-  (add-to-list 'display-buffer-alist
-                      `(,(rx bos "*helm" (* not-newline) "*" eos)
-                           (display-buffer-in-side-window)
-                           (inhibit-same-window . t)
-                           (window-height . 0.4)))
-  ;; Helm Gtags
-  (setq
-   helm-gtags-ignore-case t
-   helm-gtags-auto-update t
-   helm-gtags-use-input-at-cursor t
-   helm-gtags-pulse-at-cursor t
-   helm-gtags-prefix-key "\C-cg"
-   helm-gtags-suggested-key-mapping t
-   )
-
-  (require 'helm-gtags)
-  ;; Enable helm-gtags-mode
-  (add-hook 'dired-mode-hook 'helm-gtags-mode)
-  (add-hook 'eshell-mode-hook 'helm-gtags-mode)
-  (add-hook 'c-mode-hook 'helm-gtags-mode)
-  (add-hook 'c++-mode-hook 'helm-gtags-mode)
-  (add-hook 'asm-mode-hook 'helm-gtags-mode)
-
-  (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
-  (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
-  (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
-  (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
-  (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
-  (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
-
   ;; Projectile
   (projectile-mode +1)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
@@ -647,11 +714,11 @@
   ;; Add spell check to comments
   (add-hook 'c-mode-common-hook 'flyspell-prog-mode)
 
-  ;; Dumb jump
-  (dumb-jump-mode)
-
   ;; Function name on top
   (semantic-mode 1)
 
 
 #+END_SRC
+
+#+RESULTS:
+: t
