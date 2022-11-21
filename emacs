@@ -8,10 +8,6 @@
 (add-to-list 'package-archives
              '("gnu" . "http://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives
-             '("marmalade" . "https://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives
-             '("org" . "http://orgmode.org/elpa/"))
-(add-to-list 'package-archives
              '("tromey" . "http://tromey.com/elpa/"))
 
 ;; activate all the packages
